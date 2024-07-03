@@ -39,8 +39,6 @@ public class NewJDialog2 extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jTextField5 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
@@ -67,8 +65,6 @@ public class NewJDialog2 extends javax.swing.JDialog {
             }
         });
 
-        jLabel4.setText("PRESTADO");
-
         jLabel5.setText("UNIDADES");
 
         jLabel6.setText("DISPONIBLES");
@@ -93,10 +89,6 @@ public class NewJDialog2 extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -112,7 +104,7 @@ public class NewJDialog2 extends javax.swing.JDialog {
                                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(jTextField6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(133, 133, 133)
+                        .addGap(129, 129, 129)
                         .addComponent(jButton1)))
                 .addContainerGap(128, Short.MAX_VALUE))
         );
@@ -127,25 +119,21 @@ public class NewJDialog2 extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
+                .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
+                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
+                .addGap(32, 32, 32)
                 .addComponent(jButton1)
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(87, Short.MAX_VALUE))
         );
 
         pack();
@@ -159,18 +147,17 @@ public class NewJDialog2 extends javax.swing.JDialog {
        String id_libro=jTextField1.getText();
        String nombre_libro=jTextField2.getText();
        String autor=jTextField3.getText();
-       String prestado=jTextField4.getText();
        String unidades=jTextField5.getText();
        String disponible=jTextField6.getText();
       
-       String [] todosDatos={id_libro, nombre_libro, autor, prestado, unidades, disponible};
+       String [] todosDatos={id_libro, nombre_libro, autor,  unidades, disponible};
         
        if(id_libro.equals("")||nombre_libro.equals("")||autor.equals("")){
            JOptionPane.showMessageDialog(null, "Por favor, rellene todos los campos", "Atencion",JOptionPane.YES_OPTION);
        }else{
           
            biblioteca.tabla2.addRow(todosDatos);
-            this.setVisible(false);
+           this.setVisible(false);
        }
        
        try{
@@ -179,15 +166,14 @@ public class NewJDialog2 extends javax.swing.JDialog {
             con.setAutoCommit(false);
             System.out.println("Conectado");
             //Crear una sentencia de insercion de SQL
-            String insertQuery="INSERT INTO libros (id_libro, nombre_libro, autor, prestado, unidades, disponible) VALUES (?,?,?,?,?,?)";
+            String insertQuery="INSERT INTO libros (id_libro, nombre_libro, autor,  unidades, disponible) VALUES (?,?,?,?,?)";
             //Preparar la sentencia
             PreparedStatement preparedStatement=con.prepareStatement(insertQuery);
             preparedStatement.setString(1, id_libro);
             preparedStatement.setString(2,nombre_libro);
-            preparedStatement.setString(3, autor);
-            preparedStatement.setString(4, prestado);
-            preparedStatement.setInt(5,Integer.getInteger(unidades));
-            preparedStatement.setInt(6, Integer.getInteger(disponible));
+            preparedStatement.setString(3, autor);   
+            preparedStatement.setString(4,unidades);
+            preparedStatement.setString(5,disponible);
         
             //Ejecutar la insercion
             int rowCount=preparedStatement.executeUpdate();
@@ -254,13 +240,11 @@ public class NewJDialog2 extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     public static javax.swing.JTextField jTextField1;
     public static javax.swing.JTextField jTextField2;
     public static javax.swing.JTextField jTextField3;
-    public static javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     public static javax.swing.JTextField jTextField6;
     // End of variables declaration//GEN-END:variables

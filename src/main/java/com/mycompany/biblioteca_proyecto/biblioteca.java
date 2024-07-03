@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -48,7 +49,7 @@ public class biblioteca extends javax.swing.JFrame {
         jTable1.setModel(tabla1);
         
         //PARA LA TABLA DE LIBROS
-        String titulosLibros[]={"ID","TITULO","AUTOR","PRESTADO","UNIDADES","DISPONIBLES"};
+        String titulosLibros[]={"ID","TITULO","AUTOR","UNIDADES","DISPONIBLES"};
         tabla2=new DefaultTableModel(null, titulosLibros);
         jTable2.setModel(tabla2);
         
@@ -95,9 +96,10 @@ public class biblioteca extends javax.swing.JFrame {
                 String id_libro =rs.getString("id_libro");
                 String nombre_libro=rs.getString("nombre_libro");
                 String autor=rs.getString("autor");
-                String prestado=rs.getString("prestado");
+                String Unidades=rs.getString("Unidades");
+                String Disponible=rs.getString("Disponible");
             
-                tabla2.addRow(new Object []{id_libro, nombre_libro, autor, prestado});
+                tabla2.addRow(new Object []{id_libro, nombre_libro, autor, Unidades, Disponible});
             }
             
             rs.close();
@@ -742,7 +744,7 @@ public class biblioteca extends javax.swing.JFrame {
                 NewJDialog3.jTextField1.setText((String)(tabla2.getValueAt(filaSeleccionada, 0)));
                 NewJDialog3.jTextField2.setText((String)(tabla2.getValueAt(filaSeleccionada, 1)));
                 NewJDialog3.jTextField3.setText((String)(tabla2.getValueAt(filaSeleccionada, 2)));  
-                NewJDialog3.jTextField4.setText((String)(tabla2.getValueAt(filaSeleccionada, 3)));
+                
        
                 nd3.setVisible(true);
        
@@ -753,7 +755,7 @@ public class biblioteca extends javax.swing.JFrame {
     }//GEN-LAST:event_editarLibroActionPerformed
 
     private void borrarLibroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarLibroActionPerformed
-         filaSeleccionada = jTable2.getSelectedRow(); //esto me devuelve la fila que yo selecciono y la guardo en esta variable
+        filaSeleccionada = jTable2.getSelectedRow(); //esto me devuelve la fila que yo selecciono y la guardo en esta variable
         String id_libro = (String) tabla2.getValueAt(filaSeleccionada, 0);
         String nombre_libro = (String) tabla2.getValueAt(filaSeleccionada, 1);
 
@@ -794,69 +796,66 @@ public class biblioteca extends javax.swing.JFrame {
     private void prestarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prestarActionPerformed
         String dni_usuario = dniUsuario.getText();
         String id_libro = idLibro.getText();
-        Integer dispo=10;
-   
-       
-        boolean usuario_encontrado = false;
-        boolean libro_encontrado = false;
 
-        for (int i = 0; i < tabla1.getRowCount(); i++) {
-            if (dni_usuario.equalsIgnoreCase(tabla1.getValueAt(i, 2).toString())) {
-                System.out.println("Usuario encontrado");
-                usuario_encontrado = true;
+        //lo primero leer de la base de datos el usuario por su dni si existe continua y sino error
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
 
-                for (int j = 0; j < tabla2.getRowCount(); j++) {
-                    String prestado = tabla2.getValueAt(j, 3).toString(); 
-                    
-                    if ((id_libro.equalsIgnoreCase(tabla2.getValueAt(j, 0).toString()))
-                            && prestado.equalsIgnoreCase("NO")) {
-                        System.out.println("Libro Encontrado");
-                        tabla2.setValueAt("SI", j, 3);
-                        dispo=dispo-1;
-                        
-                        libro_encontrado = true;
-
-                    }
-
-                }
-            }
-
-        }
-        if (!usuario_encontrado) {
-            System.out.println("Usuarios no encontrado");
-            JOptionPane.showMessageDialog(null, "Usuario no encontrado");
-
-        } else if (!libro_encontrado) {
-            System.out.println("Libro no disponible");
-            JOptionPane.showMessageDialog(null, "Libro no disponible");
-
-        } else if (usuario_encontrado && libro_encontrado) {
-            JOptionPane.showMessageDialog(null, "Libro prestado correctamente");
-
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
+            if (con != null) {
                 System.out.println("Conectado");
-                //Crear una sentencia de eliminacion de SQL
-                String insertQuery = "UPDATE libros SET prestado='SI', disponible=dispo WHERE id_libro=?";
-                //Preparar la sentencia
-                PreparedStatement preparedStatement = con.prepareStatement(insertQuery);
-                preparedStatement.setString(1, id_libro);
-                preparedStatement.setInt(1, dispo);
 
-                //Ejecuto la sentencia
-                int rowCount = preparedStatement.executeUpdate();
-                //Cerrar la conexion y liberar recursos
-                preparedStatement.close();
-                con.close();
-                System.out.println("Filas afectadas: " + rowCount);
+                // Consultar si el usuario existe
+                String queryUsuario = "SELECT * FROM usuarios WHERE dni = ?";
+                PreparedStatement stmtUsuario = con.prepareStatement(queryUsuario);
+                stmtUsuario.setString(1, dni_usuario);
+                ResultSet resultadoUsuario = stmtUsuario.executeQuery();
+
+                if (resultadoUsuario.next()) {
+                    // Consultar si el libro existe y está disponible
+                    String queryLibro = "SELECT * FROM libros WHERE id_libro = ?";
+                    //Preparo la consulta
+                    PreparedStatement stmtLibro = con.prepareStatement(queryLibro);
+                    //Le damos valor al primer parametro con el id_libro
+                    stmtLibro.setString(1, id_libro);
+                    //Ejecuto la consulta
+                    ResultSet resultadoLibro = stmtLibro.executeQuery();
+
+                    if (resultadoLibro.next()) {
+                        int disponible = resultadoLibro.getInt("Disponible");
+                        if (disponible > 0) {
+                            // Prestar el libro y restar 1 a la disponibilidad
+                            String actualizarLibro = "UPDATE libros SET Disponible = Disponible - 1 WHERE id_libro = ?";
+                            PreparedStatement stmtActualizarLibro = con.prepareStatement(actualizarLibro);
+                            stmtActualizarLibro.setString(1, id_libro);
+                            stmtActualizarLibro.executeUpdate();
+                            JOptionPane.showMessageDialog(null,"Libro prestado con exito");
+                        } else {
+                            JOptionPane.showMessageDialog(null,"El libro no está disponible.");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null,"El libro no existe.");
+                   
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null,"El usuario no existe."); 
+                
+                }
+                    
+                   
+                   
+                    
+                    
+                    con.close();
+                }
+          
 
             } catch (Exception ex) {
-                System.out.println("No conectado o error al eliminar los datos: ");
+                System.out.println("No conectado o error al modificar los datos: ");
                 ex.printStackTrace();
             }
 
-        }
+        
 
 
        
