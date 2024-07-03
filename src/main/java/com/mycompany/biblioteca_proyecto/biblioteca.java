@@ -48,7 +48,7 @@ public class biblioteca extends javax.swing.JFrame {
         jTable1.setModel(tabla1);
         
         //PARA LA TABLA DE LIBROS
-        String titulosLibros[]={"ID","TITULO","AUTOR","PRESTADO"};
+        String titulosLibros[]={"ID","TITULO","AUTOR","PRESTADO","UNIDADES","DISPONIBLES"};
         tabla2=new DefaultTableModel(null, titulosLibros);
         jTable2.setModel(tabla2);
         
@@ -576,15 +576,15 @@ public class biblioteca extends javax.swing.JFrame {
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGap(81, 81, 81)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(añadirLirbro)
-                                .addGap(79, 79, 79)
-                                .addComponent(editarLibro)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(borrarLibro))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(101, Short.MAX_VALUE))
+                        .addComponent(añadirLirbro)
+                        .addGap(79, 79, 79)
+                        .addComponent(editarLibro)
+                        .addGap(87, 87, 87)
+                        .addComponent(borrarLibro))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 524, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -794,6 +794,9 @@ public class biblioteca extends javax.swing.JFrame {
     private void prestarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prestarActionPerformed
         String dni_usuario = dniUsuario.getText();
         String id_libro = idLibro.getText();
+        Integer dispo=10;
+   
+       
         boolean usuario_encontrado = false;
         boolean libro_encontrado = false;
 
@@ -803,11 +806,14 @@ public class biblioteca extends javax.swing.JFrame {
                 usuario_encontrado = true;
 
                 for (int j = 0; j < tabla2.getRowCount(); j++) {
-                    String prestado = tabla2.getValueAt(j, 3).toString();
+                    String prestado = tabla2.getValueAt(j, 3).toString(); 
+                    
                     if ((id_libro.equalsIgnoreCase(tabla2.getValueAt(j, 0).toString()))
                             && prestado.equalsIgnoreCase("NO")) {
                         System.out.println("Libro Encontrado");
                         tabla2.setValueAt("SI", j, 3);
+                        dispo=dispo-1;
+                        
                         libro_encontrado = true;
 
                     }
@@ -832,10 +838,11 @@ public class biblioteca extends javax.swing.JFrame {
                 Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
                 System.out.println("Conectado");
                 //Crear una sentencia de eliminacion de SQL
-                String insertQuery = "UPDATE libros SET prestado='SI' WHERE id_libro=?";
+                String insertQuery = "UPDATE libros SET prestado='SI', disponible=dispo WHERE id_libro=?";
                 //Preparar la sentencia
                 PreparedStatement preparedStatement = con.prepareStatement(insertQuery);
                 preparedStatement.setString(1, id_libro);
+                preparedStatement.setInt(1, dispo);
 
                 //Ejecuto la sentencia
                 int rowCount = preparedStatement.executeUpdate();
