@@ -34,11 +34,9 @@ public class NewJDialog3 extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -49,15 +47,11 @@ public class NewJDialog3 extends javax.swing.JDialog {
 
         jLabel3.setText("AUTOR");
 
-        jLabel4.setText("PRESTADO");
-
         jTextField1.setText("jTextField1");
 
         jTextField2.setText("jTextField2");
 
         jTextField3.setText("jTextField3");
-
-        jTextField4.setText("jTextField4");
 
         jButton1.setText("EDITAR");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -78,11 +72,9 @@ public class NewJDialog3 extends javax.swing.JDialog {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(55, 55, 55)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -106,11 +98,7 @@ public class NewJDialog3 extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addGap(31, 31, 31)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addGap(30, 30, 30))
         );
@@ -122,12 +110,12 @@ public class NewJDialog3 extends javax.swing.JDialog {
         String id_libro=jTextField1.getText();
         String nombre_libro=jTextField2.getText();
         String autor=jTextField3.getText();
-        String prestado=jTextField4.getText();
+        
         
         biblioteca.tabla2.setValueAt(jTextField1.getText(), biblioteca.filaSeleccionada, 0);
         biblioteca.tabla2.setValueAt(jTextField2.getText(), biblioteca.filaSeleccionada, 1);
         biblioteca.tabla2.setValueAt(jTextField3.getText(), biblioteca.filaSeleccionada, 2);
-        biblioteca.tabla2.setValueAt(jTextField4.getText(), biblioteca.filaSeleccionada, 3);
+   
         
         this.setVisible(false);
         
@@ -143,8 +131,7 @@ public class NewJDialog3 extends javax.swing.JDialog {
            
             preparedStatement.setString(1,nombre_libro);
             preparedStatement.setString(2, autor);
-            preparedStatement.setString(3, prestado);
-            preparedStatement.setString(4,id_libro);
+            preparedStatement.setString(3,id_libro);
             //Ejecutar la insercion
             int rowCount=preparedStatement.executeUpdate();
             con.commit();
@@ -209,10 +196,8 @@ public class NewJDialog3 extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     public static javax.swing.JTextField jTextField1;
     public static javax.swing.JTextField jTextField2;
     public static javax.swing.JTextField jTextField3;
-    public static javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
 }
