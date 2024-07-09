@@ -754,6 +754,44 @@ public class biblioteca extends javax.swing.JFrame {
                                          
     }//GEN-LAST:event_editarLibroActionPerformed
 
+    private void borrarLibroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarLibroActionPerformed
+        filaSeleccionada = jTable2.getSelectedRow(); //esto me devuelve la fila que yo selecciono y la guardo en esta variable
+        String id_libro = (String) tabla2.getValueAt(filaSeleccionada, 0);
+        String nombre_libro = (String) tabla2.getValueAt(filaSeleccionada, 1);
+
+        if (filaSeleccionada >= 0) {
+            if (JOptionPane.showConfirmDialog(null, "¿Desea borrar esta fila?",
+                    "Atencion", JOptionPane.YES_NO_OPTION) == 0) {
+                tabla2.removeRow(filaSeleccionada);
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
+                    System.out.println("Conectado");
+                    //Crear una sentencia de eliminacion de SQL
+                    String deleteQuery = "DELETE FROM libros WHERE id_libro=? AND nombre_libro=?";
+                    //Preparar la sentencia
+                    PreparedStatement preparedStatement = con.prepareStatement(deleteQuery);
+                    preparedStatement.setString(1, id_libro);
+                    preparedStatement.setString(2, nombre_libro);
+
+                    //Ejecuto la sentencia
+                    int rowCount = preparedStatement.executeUpdate();
+                    //Cerrar la conexion y liberar recursos
+                    preparedStatement.close();
+                    con.close();
+                    System.out.println("Filas afectadas por la eliminacion: " + rowCount);
+
+                } catch (Exception ex) {
+                    System.out.println("No conectado o error al eliminar los datos: ");
+                    ex.printStackTrace();
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione una fila",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_borrarLibroActionPerformed
 
     private void prestarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prestarActionPerformed
         String dni_usuario = dniUsuario.getText();
@@ -822,49 +860,9 @@ public class biblioteca extends javax.swing.JFrame {
 
        
     }//GEN-LAST:event_prestarActionPerformed
-	
-	    private void borrarLibroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarLibroActionPerformed
-        filaSeleccionada = jTable2.getSelectedRow(); //esto me devuelve la fila que yo selecciono y la guardo en esta variable
-        String id_libro = (String) tabla2.getValueAt(filaSeleccionada, 0);
-        String nombre_libro = (String) tabla2.getValueAt(filaSeleccionada, 1);
-
-        if (filaSeleccionada >= 0) {
-            if (JOptionPane.showConfirmDialog(null, "¿Desea borrar esta fila?",
-                    "Atencion", JOptionPane.YES_NO_OPTION) == 0) {
-                tabla2.removeRow(filaSeleccionada);
-
-                try {
-                    Class.forName("com.mysql.cj.jdbc.Driver");
-                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
-                    System.out.println("Conectado");
-                    //Crear una sentencia de eliminacion de SQL
-                    String deleteQuery = "DELETE FROM libros WHERE id_libro=? AND nombre_libro=?";
-                    //Preparar la sentencia
-                    PreparedStatement preparedStatement = con.prepareStatement(deleteQuery);
-                    preparedStatement.setString(1, id_libro);
-                    preparedStatement.setString(2, nombre_libro);
-
-                    //Ejecuto la sentencia
-                    int rowCount = preparedStatement.executeUpdate();
-                    //Cerrar la conexion y liberar recursos
-                    preparedStatement.close();
-                    con.close();
-                    System.out.println("Filas afectadas por la eliminacion: " + rowCount);
-
-                } catch (Exception ex) {
-                    System.out.println("No conectado o error al eliminar los datos: ");
-                    ex.printStackTrace();
-                }
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Seleccione una fila",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_borrarLibroActionPerformed
 
     private void devolver1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_devolver1ActionPerformed
-        
-		String dni_usuario=dniUsuarioD.getText();
+        String dni_usuario=dniUsuarioD.getText();
         String id_libro=idLibroD.getText();
         boolean usuario_encontrado=false;
         boolean libro_encontrado=false;
@@ -872,20 +870,12 @@ public class biblioteca extends javax.swing.JFrame {
         
         
         for (int i = 0; i <tabla1.getRowCount(); i++) {
-			
-			
             if(dni_usuario.equalsIgnoreCase(tabla1.getValueAt(i, 2).toString())){
-				
-				
-				
-                System.out.println("Usuario encontrado!");
+                System.out.println("Usuario encontrado");
                 usuario_encontrado=true;
              
                 for (int j = 0; j <tabla2.getRowCount(); j++) {
-					
-					
                     String prestado=tabla2.getValueAt(j,3).toString();
-					
                     if((id_libro.equalsIgnoreCase(tabla2.getValueAt(j, 0).toString())) 
                         && prestado.equalsIgnoreCase("SI") ){
                         System.out.println("Libro Encontrado");
@@ -900,12 +890,12 @@ public class biblioteca extends javax.swing.JFrame {
             
         }
         if(!usuario_encontrado){
-            System.out.println("Usuarios no encontrado!");
+            System.out.println("Usuarios no encontrado");
             JOptionPane.showMessageDialog(null,"Usuario no encontrado");
         
         }else if(!libro_encontrado){
-             System.out.println("Libro no encontrado!");
-             JOptionPane.showMessageDialog(null,"Libro no disponible!");
+             System.out.println("Libro no encontrado");
+             JOptionPane.showMessageDialog(null,"Libro no disponible");
              
         }else if(usuario_encontrado&&libro_encontrado){
              JOptionPane.showMessageDialog(null,"Libro devuelto correctamente");
