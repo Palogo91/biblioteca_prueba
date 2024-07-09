@@ -841,10 +841,7 @@ public class biblioteca extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null,"El usuario no existe."); 
                 
                 }
-                    
-                   
-                   
-                    
+                     
                     
                     con.close();
                 }
@@ -862,73 +859,63 @@ public class biblioteca extends javax.swing.JFrame {
     }//GEN-LAST:event_prestarActionPerformed
 
     private void devolver1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_devolver1ActionPerformed
-        String dni_usuario=dniUsuarioD.getText();
-        String id_libro=idLibroD.getText();
-        boolean usuario_encontrado=false;
-        boolean libro_encontrado=false;
+        String dniUsuario=dniUsuarioD.getText();
+        String idLibro=idLibroD.getText();
         
-        
-        
-        for (int i = 0; i <tabla1.getRowCount(); i++) {
-            if(dni_usuario.equalsIgnoreCase(tabla1.getValueAt(i, 2).toString())){
-                System.out.println("Usuario encontrado");
-                usuario_encontrado=true;
-             
-                for (int j = 0; j <tabla2.getRowCount(); j++) {
-                    String prestado=tabla2.getValueAt(j,3).toString();
-                    if((id_libro.equalsIgnoreCase(tabla2.getValueAt(j, 0).toString())) 
-                        && prestado.equalsIgnoreCase("SI") ){
-                        System.out.println("Libro Encontrado");
-                        tabla2.setValueAt("NO", j, 3);
-                        libro_encontrado=true;              
-            }
+        //lo primero leer de la base de datos el usuario por su dni si existe continua y sino error
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
+
+            if (con != null) {
+                System.out.println("Conectado");
+
+                // Consultar si el usuario existe
+                String queryUsuario = "SELECT * FROM usuarios WHERE dni = ?";
+                PreparedStatement stmtUsuario = con.prepareStatement(queryUsuario);
+                stmtUsuario.setString(1, dniUsuario);
+                ResultSet resultadoUsuario = stmtUsuario.executeQuery();
+
+                if (resultadoUsuario.next()) {
+                    // Consultar si el libro existe y está disponible
+                    String queryLibro = "SELECT * FROM libros WHERE id_libro = ?";
+                    //Preparo la consulta
+                    PreparedStatement stmtLibro = con.prepareStatement(queryLibro);
+                    //Le damos valor al primer parametro con el id_libro
+                    stmtLibro.setString(1, idLibro);
+                    //Ejecuto la consulta
+                    ResultSet resultadoLibro = stmtLibro.executeQuery();
+
+                    if (resultadoLibro.next()) {
                        
-            
-        }
+                            // Devolver el libro y sumar 1 a la disponibilidad
+                            String actualizarLibro = "UPDATE libros SET Disponible = Disponible + 1 WHERE id_libro = ?";
+                            PreparedStatement stmtActualizarLibro = con.prepareStatement(actualizarLibro);
+                            stmtActualizarLibro.setString(1, idLibro);
+                            stmtActualizarLibro.executeUpdate();
+                            JOptionPane.showMessageDialog(null,"Libro devuelto con exito");
+                       
+                    } else {
+                        JOptionPane.showMessageDialog(null,"El libro no existe.");
+                   
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null,"El usuario no existe."); 
+                
+                }
+                     
+                    
+                    con.close();
+                }
+          
+
+            } catch (Exception ex) {
+                System.out.println("No conectado o error al modificar los datos: ");
+                ex.printStackTrace();
             }
-                 
-            
-        }
-        if(!usuario_encontrado){
-            System.out.println("Usuarios no encontrado");
-            JOptionPane.showMessageDialog(null,"Usuario no encontrado");
+       
+
         
-        }else if(!libro_encontrado){
-             System.out.println("Libro no encontrado");
-             JOptionPane.showMessageDialog(null,"Libro no disponible");
-             
-        }else if(usuario_encontrado&&libro_encontrado){
-             JOptionPane.showMessageDialog(null,"Libro devuelto correctamente");
-        
-         try{
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                Connection con= DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
-                System.out.println("Conectado"); 
-                //Crear una sentencia de eliminacion de SQL
-                String insertQuery= "UPDATE libros SET prestado='NO' WHERE id_libro=?";
-                //Preparar la sentencia
-                 PreparedStatement preparedStatement=con.prepareStatement(insertQuery);
-                 preparedStatement.setString(1, id_libro);
-                
-                
-                 //Ejecuto la sentencia
-                 int rowCount=preparedStatement.executeUpdate();
-                 //Cerrar la conexion y liberar recursos
-                 preparedStatement.close();
-                 con.close();
-                 System.out.println("Filas afectadas: " + rowCount);
-                 
-                 
-               
-               }catch(Exception ex){
-                   System.out.println("No conectado o error al eliminar los datos: ");
-                   ex.printStackTrace();
-               }
-        
-        
-        
-        
-        }
      
         
     }//GEN-LAST:event_devolver1ActionPerformed
