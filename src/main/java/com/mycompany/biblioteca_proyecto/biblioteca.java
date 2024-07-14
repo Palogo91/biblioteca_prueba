@@ -11,6 +11,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import static java.time.LocalDateTime.now;
+import java.util.Date;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -21,10 +25,11 @@ import javax.swing.table.DefaultTableModel;
  */
 public class biblioteca extends javax.swing.JFrame {
 
-     public static DefaultTableModel tabla1;
-     public static DefaultTableModel tabla2;
-     public static int filaSeleccionada;
-     public static void crearfecha(){ 
+    public static DefaultTableModel tabla1;
+    public static DefaultTableModel tabla2;
+    public static int filaSeleccionada;
+
+    public static void crearfecha() {
         Format formatter = new SimpleDateFormat("dd-MM-yyyy");
         String s = formatter.format(new java.util.Date());
         jTextField5.setText("FECHA " + s);
@@ -33,84 +38,79 @@ public class biblioteca extends javax.swing.JFrame {
         jTextField2.setText("FECHA " + s);
         jTextField1.setText("FECHA " + s);
     }
-     
+
     public biblioteca() {
         initComponents();
         prepararTabla();
         crearfecha();
-        
-        
+
     }
-    
-    public void prepararTabla(){
+
+    public void prepararTabla() {
         //PARA LA TABLA USUARIOS
-        String titulosUsuarios[]={"NOMBRE","APELLIDOS","DNI","DOMICILIO","TELFONO"};
-        tabla1 = new DefaultTableModel(null, titulosUsuarios); 
+        String titulosUsuarios[] = {"NOMBRE", "APELLIDOS", "DNI", "DOMICILIO", "TELFONO"};
+        tabla1 = new DefaultTableModel(null, titulosUsuarios);
         jTable1.setModel(tabla1);
-        
+
         //PARA LA TABLA DE LIBROS
-        String titulosLibros[]={"ID","TITULO","AUTOR","UNIDADES","DISPONIBLES"};
-        tabla2=new DefaultTableModel(null, titulosLibros);
+        String titulosLibros[] = {"ID", "TITULO", "AUTOR", "DISPONIBLES"};
+        tabla2 = new DefaultTableModel(null, titulosLibros);
         jTable2.setModel(tabla2);
-        
-        try{
+
+        try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con= DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
             System.out.println("Conectado");
-            
-            String query ="Select * from Usuarios";//Usuarios es el nombre de la tabla
-           
-            
-            Statement stmt=con.createStatement();//Crea un objeto para establecer la conexion
-            ResultSet rs=stmt.executeQuery(query);// Establece la consulta y almacena los datos en rs
+
+            String query = "Select * from Usuarios";//Usuarios es el nombre de la tabla
+
+            Statement stmt = con.createStatement();//Crea un objeto para establecer la conexion
+            ResultSet rs = stmt.executeQuery(query);// Establece la consulta y almacena los datos en rs
             tabla1.setRowCount(0);//Borra todas las filas de la tabla
-            while(rs.next()){
-                String nombre =rs.getString("nombre");
-                String apellidos=rs.getString("apellidos");
-                String dni=rs.getString("dni");
-                String domicilio=rs.getString("domicilio");
-                String telefono=rs.getString("telefono");
-                tabla1.addRow(new Object []{nombre, apellidos, dni, domicilio,telefono});
+            while (rs.next()) {
+                String nombre = rs.getString("nombre");
+                String apellidos = rs.getString("apellidos");
+                String dni = rs.getString("dni");
+                String domicilio = rs.getString("domicilio");
+                String telefono = rs.getString("telefono");
+                tabla1.addRow(new Object[]{nombre, apellidos, dni, domicilio, telefono});
             }
-            
+
             rs.close();
             stmt.close();
             con.close();
-        }catch(Exception ex){
+        } catch (Exception ex) {
             System.out.println("No conectado. Error: ");
             ex.printStackTrace();
         }
-        
-        try{
+
+        try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con= DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
             System.out.println("Conectado");
-            
-            String query2 ="Select * from libros";//libros es el nombre de la tabla
-           
-            
-            Statement stmt=con.createStatement();//Crea un objeto para establecer la conexion
-            ResultSet rs=stmt.executeQuery(query2);// Establece la consulta y almacena los datos en rs
+
+            String query2 = "Select * from libros";//libros es el nombre de la tabla
+
+            Statement stmt = con.createStatement();//Crea un objeto para establecer la conexion
+            ResultSet rs = stmt.executeQuery(query2);// Establece la consulta y almacena los datos en rs
             tabla2.setRowCount(0);//Borra todas las filas de la tabla
-            while(rs.next()){
-                String id_libro =rs.getString("id_libro");
-                String nombre_libro=rs.getString("nombre_libro");
-                String autor=rs.getString("autor");
-                String Unidades=rs.getString("Unidades");
-                String Disponible=rs.getString("Disponible");
-            
-                tabla2.addRow(new Object []{id_libro, nombre_libro, autor, Unidades, Disponible});
+            while (rs.next()) {
+                String id_libro = rs.getString("id_libro");
+                String nombre_libro = rs.getString("nombre_libro");
+                String autor = rs.getString("autor");
+                String Disponible = rs.getString("Disponible");
+
+                tabla2.addRow(new Object[]{id_libro, nombre_libro, autor, Disponible});
             }
-            
+
             rs.close();
             stmt.close();
             con.close();
-        }catch(Exception ex){
+        } catch (Exception ex) {
             System.out.println("No conectado. Error: ");
             ex.printStackTrace();
         }
-    
-    
+
     }
 
     /**
@@ -656,108 +656,104 @@ public class biblioteca extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField5ActionPerformed
 
     private void nuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoActionPerformed
-        NewJDialog nd=new NewJDialog(null, true);//si pongo true solo puedo interactuar con el jdialog
+        NewJDialog nd = new NewJDialog(null, true);//si pongo true solo puedo interactuar con el jdialog
         nd.setLocationRelativeTo(null);//esto para centrar el jdialog
         nd.setVisible(true);
-        
-       
-       
-        
+
+
     }//GEN-LAST:event_nuevoActionPerformed
 
     private void editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarActionPerformed
-         NewJDialog1 nd1=new NewJDialog1(null, true);
-         nd1.setLocationRelativeTo(null);
-        
-         
-         filaSeleccionada=jTable1.getSelectedRow();
-       
-       if(filaSeleccionada>=0){
-       
-                NewJDialog1.jTextField6.setText((String)(tabla1.getValueAt(filaSeleccionada, 0)));
-                NewJDialog1.jTextField7.setText((String)(tabla1.getValueAt(filaSeleccionada, 1)));
-                NewJDialog1.jTextField8.setText((String)(tabla1.getValueAt(filaSeleccionada, 2))); 
-                NewJDialog1.jTextField9.setText((String)(tabla1.getValueAt(filaSeleccionada, 3)));
-                NewJDialog1.jTextField10.setText((String)(tabla1.getValueAt(filaSeleccionada, 4)));
-       
-                nd1.setVisible(true);
-       
+        NewJDialog1 nd1 = new NewJDialog1(null, true);
+        nd1.setLocationRelativeTo(null);
 
-       }else 
-           JOptionPane.showConfirmDialog(null, "Seleccione una fila");
-              
-                                       
+        filaSeleccionada = jTable1.getSelectedRow();
+
+        if (filaSeleccionada >= 0) {
+
+            NewJDialog1.jTextField6.setText((String) (tabla1.getValueAt(filaSeleccionada, 0)));
+            NewJDialog1.jTextField7.setText((String) (tabla1.getValueAt(filaSeleccionada, 1)));
+            NewJDialog1.jTextField8.setText((String) (tabla1.getValueAt(filaSeleccionada, 2)));
+            NewJDialog1.jTextField9.setText((String) (tabla1.getValueAt(filaSeleccionada, 3)));
+            NewJDialog1.jTextField10.setText((String) (tabla1.getValueAt(filaSeleccionada, 4)));
+
+            nd1.setVisible(true);
+
+        } else {
+            JOptionPane.showConfirmDialog(null, "Seleccione una fila");
+        }
+
+
     }//GEN-LAST:event_editarActionPerformed
 
     private void borrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarActionPerformed
-        filaSeleccionada= jTable1.getSelectedRow(); //esto me devuelve la fila que yo selecciono y la guardo en esta variable
-         String nombre=(String)tabla1.getValueAt(filaSeleccionada, 0);
-         String apellidos=(String)tabla1.getValueAt(filaSeleccionada, 1);
-        if(filaSeleccionada>=0){
-            if(JOptionPane.showConfirmDialog(null, "¿Desea borrar esta fila?",
-               "Atencion", JOptionPane.YES_NO_OPTION)==0){
-               tabla1.removeRow(filaSeleccionada);
-               
-               try{
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                Connection con= DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
-                System.out.println("Conectado"); 
-                //Crear una sentencia de eliminacion de SQL
-                String deleteQuery= "DELETE FROM usuarios WHERE nombre=? AND apellidos=?";
-                //Preparar la sentencia
-                 PreparedStatement preparedStatement=con.prepareStatement(deleteQuery);
-                 preparedStatement.setString(1, nombre);
-                 preparedStatement.setString(2, apellidos);
-                 //Ejecuto la sentencia
-                 int rowCount=preparedStatement.executeUpdate();
-                 //Cerrar la conexion y liberar recursos
-                 preparedStatement.close();
-                 con.close();
-                 System.out.println("Filas afectadas por la eliminacion: " + rowCount);
-               
-               }catch(Exception ex){
-                   System.out.println("No conectado o error al eliminar los datos: ");
-                   ex.printStackTrace();
-               }
-            }  
-        }else{
-            JOptionPane.showMessageDialog(null, "Seleccione una fila", 
-                                            "Error",JOptionPane.ERROR_MESSAGE);
+        filaSeleccionada = jTable1.getSelectedRow(); //esto me devuelve la fila que yo selecciono y la guardo en esta variable
+        String nombre = (String) tabla1.getValueAt(filaSeleccionada, 0);
+        String apellidos = (String) tabla1.getValueAt(filaSeleccionada, 1);
+        if (filaSeleccionada >= 0) {
+            if (JOptionPane.showConfirmDialog(null, "¿Desea borrar esta fila?",
+                    "Atencion", JOptionPane.YES_NO_OPTION) == 0) {
+                tabla1.removeRow(filaSeleccionada);
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
+                    System.out.println("Conectado");
+                    //Crear una sentencia de eliminacion de SQL
+                    String deleteQuery = "DELETE FROM usuarios WHERE nombre=? AND apellidos=?";
+                    //Preparar la sentencia
+                    PreparedStatement preparedStatement = con.prepareStatement(deleteQuery);
+                    preparedStatement.setString(1, nombre);
+                    preparedStatement.setString(2, apellidos);
+                    //Ejecuto la sentencia
+                    int rowCount = preparedStatement.executeUpdate();
+                    //Cerrar la conexion y liberar recursos
+                    preparedStatement.close();
+                    con.close();
+                    System.out.println("Filas afectadas por la eliminacion: " + rowCount);
+
+                } catch (Exception ex) {
+                    System.out.println("No conectado o error al eliminar los datos: ");
+                    ex.printStackTrace();
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione una fila",
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_borrarActionPerformed
 
     private void añadirLirbroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_añadirLirbroActionPerformed
-           NewJDialog2 nd2=new NewJDialog2(null, true);//si pongo true solo puedo interactuar con el jdialog
-           nd2.setLocationRelativeTo(null);//esto para centrar el jdialog
-           nd2.setVisible(true);
+        NewJDialog2 nd2 = new NewJDialog2(null, true);//si pongo true solo puedo interactuar con el jdialog
+        nd2.setLocationRelativeTo(null);//esto para centrar el jdialog
+        nd2.setVisible(true);
     }//GEN-LAST:event_añadirLirbroActionPerformed
 
     private void editarLibroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarLibroActionPerformed
-       NewJDialog3 nd3=new NewJDialog3(null, true);
-       nd3.setLocationRelativeTo(null);
-        
-         
-       filaSeleccionada=jTable2.getSelectedRow();
-       
-       if(filaSeleccionada>=0){
-       
-                NewJDialog3.jTextField1.setText((String)(tabla2.getValueAt(filaSeleccionada, 0)));
-                NewJDialog3.jTextField2.setText((String)(tabla2.getValueAt(filaSeleccionada, 1)));
-                NewJDialog3.jTextField3.setText((String)(tabla2.getValueAt(filaSeleccionada, 2)));  
-                
-       
-                nd3.setVisible(true);
-       
+        NewJDialog3 nd3 = new NewJDialog3(null, true);
+        nd3.setLocationRelativeTo(null);
 
-       }else 
-           JOptionPane.showConfirmDialog(null, "Seleccione una fila");                                  
-                                         
+        filaSeleccionada = jTable2.getSelectedRow();
+
+        if (filaSeleccionada >= 0) {
+
+            NewJDialog3.jTextField1.setText((String) (tabla2.getValueAt(filaSeleccionada, 0)));
+            NewJDialog3.jTextField2.setText((String) (tabla2.getValueAt(filaSeleccionada, 1)));
+            NewJDialog3.jTextField3.setText((String) (tabla2.getValueAt(filaSeleccionada, 2)));
+
+            nd3.setVisible(true);
+
+        } else {
+            JOptionPane.showConfirmDialog(null, "Seleccione una fila");
+        }
+
     }//GEN-LAST:event_editarLibroActionPerformed
 
 
     private void prestarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prestarActionPerformed
         String dni_usuario = dniUsuario.getText();
         String id_libro = idLibro.getText();
+        String fechaInicio;
 
         //lo primero leer de la base de datos el usuario por su dni si existe continua y sino error
         try {
@@ -791,112 +787,22 @@ public class biblioteca extends javax.swing.JFrame {
                             PreparedStatement stmtActualizarLibro = con.prepareStatement(actualizarLibro);
                             stmtActualizarLibro.setString(1, id_libro);
                             stmtActualizarLibro.executeUpdate();
-                            JOptionPane.showMessageDialog(null,"Libro prestado con exito");
+                            
+                            //Pasar el usuario, el libro y la fecha a la tabla prestamos
+                            fechaInicio=LocalDate.now().toString();
+                            String prestamo="INSERT INTO prestamos (Usuario, Libro, `Fecha Prestamo`) VALUES (?, ?, ?)";
+                            PreparedStatement stmtActualizaPrestamo=con.prepareStatement(prestamo);
+                            stmtActualizaPrestamo.setString(1, dni_usuario);
+                            stmtActualizaPrestamo.setString(2, id_libro);
+                            stmtActualizaPrestamo.setString(3, fechaInicio);
+                            stmtActualizaPrestamo.execute();
+                            
+                            
+                            
+                            JOptionPane.showMessageDialog(null, "Libro prestado con exito");
                         } else {
-                            JOptionPane.showMessageDialog(null,"El libro no está disponible.");
+                            JOptionPane.showMessageDialog(null, "El libro no está disponible.");
                         }
-                    } else {
-                        JOptionPane.showMessageDialog(null,"El libro no existe.");
-                   
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null,"El usuario no existe."); 
-                
-                }
-                     
-                    
-                    con.close();
-                }
-          
-
-            } catch (Exception ex) {
-                System.out.println("No conectado o error al modificar los datos: ");
-                ex.printStackTrace();
-            }
-
-        
-
-
-       
-    }//GEN-LAST:event_prestarActionPerformed
-	
-	    private void borrarLibroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarLibroActionPerformed
-        filaSeleccionada = jTable2.getSelectedRow(); //esto me devuelve la fila que yo selecciono y la guardo en esta variable
-        String id_libro = (String) tabla2.getValueAt(filaSeleccionada, 0);
-        String nombre_libro = (String) tabla2.getValueAt(filaSeleccionada, 1);
-
-        if (filaSeleccionada >= 0) {
-            if (JOptionPane.showConfirmDialog(null, "¿Desea borrar esta fila?",
-                    "Atencion", JOptionPane.YES_NO_OPTION) == 0) {
-                tabla2.removeRow(filaSeleccionada);
-
-                try {
-                    Class.forName("com.mysql.cj.jdbc.Driver");
-                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
-                    System.out.println("Conectado");
-                    //Crear una sentencia de eliminacion de SQL
-                    String deleteQuery = "DELETE FROM libros WHERE id_libro=? AND nombre_libro=?";
-                    //Preparar la sentencia
-                    PreparedStatement preparedStatement = con.prepareStatement(deleteQuery);
-                    preparedStatement.setString(1, id_libro);
-                    preparedStatement.setString(2, nombre_libro);
-
-                    //Ejecuto la sentencia
-                    int rowCount = preparedStatement.executeUpdate();
-                    //Cerrar la conexion y liberar recursos
-                    preparedStatement.close();
-                    con.close();
-                    System.out.println("Filas afectadas por la eliminacion: " + rowCount);
-
-                } catch (Exception ex) {
-                    System.out.println("No conectado o error al eliminar los datos: ");
-                    ex.printStackTrace();
-                }
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Seleccione una fila",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_borrarLibroActionPerformed
-
-    private void devolver1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_devolver1ActionPerformed
-
-        String dniUsuario = dniUsuarioD.getText();
-        String idLibro = idLibroD.getText();
-
-        //lo primero leer de la base de datos el usuario por su dni si existe continua y sino error
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
-
-            if (con != null) {
-                System.out.println("Conectado");
-
-                // Consultar si el usuario existe
-                String queryUsuario = "SELECT * FROM usuarios WHERE dni = ?";
-                PreparedStatement stmtUsuario = con.prepareStatement(queryUsuario);
-                stmtUsuario.setString(1, dniUsuario);
-                ResultSet resultadoUsuario = stmtUsuario.executeQuery();
-
-                if (resultadoUsuario.next()) {
-                    // Consultar si el libro existe y está disponible
-                    String queryLibro = "SELECT * FROM libros WHERE id_libro = ?";
-                    //Preparo la consulta
-                    PreparedStatement stmtLibro = con.prepareStatement(queryLibro);
-                    //Le damos valor al primer parametro con el id_libro
-                    stmtLibro.setString(1, idLibro);
-                    //Ejecuto la consulta
-                    ResultSet resultadoLibro = stmtLibro.executeQuery();
-
-                    if (resultadoLibro.next()) {
-
-                        // Devolver el libro y sumar 1 a la disponibilidad
-                        String actualizarLibro = "UPDATE libros SET Disponible = Disponible + 1 WHERE id_libro = ?";
-                        PreparedStatement stmtActualizarLibro = con.prepareStatement(actualizarLibro);
-                        stmtActualizarLibro.setString(1, idLibro);
-                        stmtActualizarLibro.executeUpdate();
-                        JOptionPane.showMessageDialog(null, "Libro devuelto con exito");
-
                     } else {
                         JOptionPane.showMessageDialog(null, "El libro no existe.");
 
@@ -913,16 +819,142 @@ public class biblioteca extends javax.swing.JFrame {
             System.out.println("No conectado o error al modificar los datos: ");
             ex.printStackTrace();
         }
-        
-        
-        
-        
-        
-        
-        
 
-     
-        
+
+    }//GEN-LAST:event_prestarActionPerformed
+
+	    private void borrarLibroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarLibroActionPerformed
+                filaSeleccionada = jTable2.getSelectedRow(); //esto me devuelve la fila que yo selecciono y la guardo en esta variable
+                String id_libro = (String) tabla2.getValueAt(filaSeleccionada, 0);
+                String nombre_libro = (String) tabla2.getValueAt(filaSeleccionada, 1);
+
+                if (filaSeleccionada >= 0) {
+                    if (JOptionPane.showConfirmDialog(null, "¿Desea borrar este libro?",
+                            "Atencion", JOptionPane.YES_NO_OPTION) == 0) {
+                        tabla2.removeRow(filaSeleccionada);
+
+                        try {
+                            Class.forName("com.mysql.cj.jdbc.Driver");
+                            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
+                            System.out.println("Conectado");
+                            //Crear una sentencia de eliminacion de SQL
+                            String deleteQuery = "DELETE FROM libros WHERE id_libro=? AND nombre_libro=?";
+                            //Preparar la sentencia
+                            PreparedStatement preparedStatement = con.prepareStatement(deleteQuery);
+                            preparedStatement.setString(1, id_libro);
+                            preparedStatement.setString(2, nombre_libro);
+
+                            //Ejecuto la sentencia
+                            int rowCount = preparedStatement.executeUpdate();
+                            //Cerrar la conexion y liberar recursos
+                            preparedStatement.close();
+                            con.close();
+                            System.out.println("Filas afectadas por la eliminacion: " + rowCount);
+
+                        } catch (Exception ex) {
+                            System.out.println("No conectado o error al eliminar los datos: ");
+                            ex.printStackTrace();
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Seleccione una fila",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+    }//GEN-LAST:event_borrarLibroActionPerformed
+
+    private void devolver1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_devolver1ActionPerformed
+
+        String dniUsuario = dniUsuarioD.getText();
+        String idLibro = idLibroD.getText();
+        String fechaDevolucion = LocalDate.now().toString();
+        String fechaPrestamo = "";
+
+        //lo primero leer de la base de datos el usuario por su dni si existe continua y sino error
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
+
+            if (con != null) {
+                System.out.println("Conectado");
+
+                // Consultar si el usuario existe
+                String queryUsuario = "SELECT * FROM prestamos WHERE Usuario = ?";
+                PreparedStatement stmtUsuario = con.prepareStatement(queryUsuario);
+                stmtUsuario.setString(1, dniUsuario);
+                ResultSet resultadoUsuario = stmtUsuario.executeQuery();
+
+                if (resultadoUsuario.next()) {
+                    // Consultar si el libro existe 
+                    String queryLibro = "SELECT * FROM prestamos WHERE Usuario = ? AND Libro = ?";
+                    //Preparo la consulta
+                    PreparedStatement stmtLibro = con.prepareStatement(queryLibro);
+                    //Le damos valor al primer parametro con el id_libro
+                    stmtLibro.setString(1, dniUsuario);
+                    stmtLibro.setString(2, idLibro);
+                    //Ejecuto la consulta
+                    ResultSet resultadoLibro = stmtLibro.executeQuery();
+
+                    if (resultadoLibro.next()) {
+
+                        // Devolver el libro y sumar 1 a la disponibilidad
+                        String actualizarLibro = "UPDATE libros SET Disponible = Disponible + 1 WHERE id_libro = ?";
+                        PreparedStatement stmtActualizarLibro = con.prepareStatement(actualizarLibro);
+                        stmtActualizarLibro.setString(1, idLibro);
+                        stmtActualizarLibro.executeUpdate();
+
+                        //Poner la fecha de devolucion en la tabla prestamos
+                        String devolucion = "UPDATE prestamos SET `Fecha Devolucion` = ? WHERE Usuario = ? AND Libro = ?";
+                        PreparedStatement stmtDevolverLibro = con.prepareStatement(devolucion);
+                        stmtDevolverLibro.setString(1, fechaDevolucion);
+                        stmtDevolverLibro.setString(2, dniUsuario);
+                        stmtDevolverLibro.setString(3, idLibro);
+                        stmtDevolverLibro.execute();
+
+                        //Coger la fecha del prestamo
+                        String prestamo = "SELECT `Fecha Prestamo` FROM prestamos WHERE Usuario=? AND Libro=?";
+                        PreparedStatement stmtprestamo = con.prepareStatement(prestamo);
+                        stmtprestamo.setString(1, dniUsuario);
+                        stmtprestamo.setString(2, idLibro);
+
+                        ResultSet fechaP = stmtprestamo.executeQuery();
+                        if (fechaP.next()) {
+                            fechaPrestamo = fechaP.getString("Fecha Prestamo");
+                        }
+
+                        //Pasamos las fechas a localdate para poder restarlas
+                        LocalDate fecha1 = LocalDate.parse(fechaPrestamo);
+                        LocalDate fecha2 = LocalDate.parse(fechaDevolucion);
+
+                        //Restamos
+                        int dias = fecha2.getDayOfMonth() - fecha1.getDayOfMonth();
+
+                        if (dias <= 3) {
+                            JOptionPane.showMessageDialog(null, "Libro devuelto con exito");
+                        } else {
+                            String sancion = "UPDATE Prestamos SET Sancion=20 euros WHERE Usuario=? AND Libro=? ";
+                            PreparedStatement stmtSancion = con.prepareStatement(sancion);
+                            stmtSancion.setString(1, dniUsuario);
+                            stmtSancion.setString(2, idLibro);
+                            JOptionPane.showMessageDialog(null, "Sancion por devolucion de libro fuera de plazo");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "El libro no existe.");
+
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "El usuario no existe.");
+
+                }
+
+                con.close();
+            }
+
+        } catch (Exception ex) {
+            System.out.println("No conectado o error al modificar los datos: ");
+            ex.printStackTrace();
+        }
+
+
     }//GEN-LAST:event_devolver1ActionPerformed
 
     /**
@@ -998,6 +1030,6 @@ public class biblioteca extends javax.swing.JFrame {
     public static javax.swing.JTextField jTextField5;
     private javax.swing.JButton nuevo;
     private javax.swing.JTabbedPane panelPrincipal;
-    private javax.swing.JButton prestar;
+    public static javax.swing.JButton prestar;
     // End of variables declaration//GEN-END:variables
 }

@@ -39,8 +39,6 @@ public class NewJDialog2 extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jTextField6 = new javax.swing.JTextField();
 
@@ -65,8 +63,6 @@ public class NewJDialog2 extends javax.swing.JDialog {
             }
         });
 
-        jLabel5.setText("UNIDADES");
-
         jLabel6.setText("DISPONIBLES");
 
         jTextField6.addActionListener(new java.awt.event.ActionListener() {
@@ -88,10 +84,6 @@ public class NewJDialog2 extends javax.swing.JDialog {
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -123,15 +115,11 @@ public class NewJDialog2 extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
+                .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(32, 32, 32)
+                .addGap(78, 78, 78)
                 .addComponent(jButton1)
                 .addContainerGap(87, Short.MAX_VALUE))
         );
@@ -147,10 +135,9 @@ public class NewJDialog2 extends javax.swing.JDialog {
        String id_libro=jTextField1.getText();
        String nombre_libro=jTextField2.getText();
        String autor=jTextField3.getText();
-       String unidades=jTextField5.getText();
        String disponible=jTextField6.getText();
       
-       String [] todosDatos={id_libro, nombre_libro, autor,  unidades, disponible};
+       String [] todosDatos={id_libro, nombre_libro, autor, disponible};
         
        if(id_libro.equals("")||nombre_libro.equals("")||autor.equals("")){
            JOptionPane.showMessageDialog(null, "Por favor, rellene todos los campos", "Atencion",JOptionPane.YES_OPTION);
@@ -166,14 +153,13 @@ public class NewJDialog2 extends javax.swing.JDialog {
             con.setAutoCommit(false);
             System.out.println("Conectado");
             //Crear una sentencia de insercion de SQL
-            String insertQuery="INSERT INTO libros (id_libro, nombre_libro, autor,  unidades, disponible) VALUES (?,?,?,?,?)";
+            String insertQuery="INSERT INTO libros (id_libro, nombre_libro, autor, disponible) VALUES (?,?,?,?)";
             //Preparar la sentencia
             PreparedStatement preparedStatement=con.prepareStatement(insertQuery);
             preparedStatement.setString(1, id_libro);
             preparedStatement.setString(2,nombre_libro);
             preparedStatement.setString(3, autor);   
-            preparedStatement.setString(4,unidades);
-            preparedStatement.setString(5,disponible);
+            preparedStatement.setString(4,disponible);
         
             //Ejecutar la insercion
             int rowCount=preparedStatement.executeUpdate();
@@ -240,12 +226,10 @@ public class NewJDialog2 extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     public static javax.swing.JTextField jTextField1;
     public static javax.swing.JTextField jTextField2;
     public static javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField5;
     public static javax.swing.JTextField jTextField6;
     // End of variables declaration//GEN-END:variables
 }
