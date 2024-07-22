@@ -868,6 +868,7 @@ public class biblioteca extends javax.swing.JFrame {
         String idLibro = idLibroD.getText();
         String fechaDevolucion = LocalDate.now().toString();
         String fechaPrestamo = "";
+        String sancion1="20€";
 
         //lo primero leer de la base de datos el usuario por su dni si existe continua y sino error
         try {
@@ -931,10 +932,12 @@ public class biblioteca extends javax.swing.JFrame {
                         if (dias <= 3) {
                             JOptionPane.showMessageDialog(null, "Libro devuelto con exito");
                         } else {
-                            String sancion = "UPDATE Prestamos SET Sancion=20 euros WHERE Usuario=? AND Libro=? ";
+                            String sancion = "UPDATE Prestamos SET Sancion=? WHERE Usuario=? AND Libro=? ";
                             PreparedStatement stmtSancion = con.prepareStatement(sancion);
-                            stmtSancion.setString(1, dniUsuario);
-                            stmtSancion.setString(2, idLibro);
+                            stmtSancion.setString(1, sancion1);
+                            stmtSancion.setString(2, dniUsuario);
+                            stmtSancion.setString(3, idLibro);
+                            stmtSancion.execute();
                             JOptionPane.showMessageDialog(null, "Sancion por devolucion de libro fuera de plazo");
                         }
                     } else {
