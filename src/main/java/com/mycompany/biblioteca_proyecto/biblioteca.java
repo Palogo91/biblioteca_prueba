@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import static java.time.LocalDateTime.now;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -754,8 +755,10 @@ public class biblioteca extends javax.swing.JFrame {
         String dni_usuario = dniUsuario.getText();
         String id_libro = idLibro.getText();
         String fechaInicio;
+        String fechaActual = LocalDate.now().toString();
+        String sancionFecha;
+       
 
-        //lo primero leer de la base de datos el usuario por su dni si existe continua y sino error
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblioteca", "root", "");
@@ -770,13 +773,30 @@ public class biblioteca extends javax.swing.JFrame {
                 ResultSet resultadoUsuario = stmtUsuario.executeQuery();
 
                 if (resultadoUsuario.next()) {
+                    // Consulta si el usuario tiene fecha de sanción
+                    String queryFechaSancion = "SELECT Fecha_sancion FROM usuarios WHERE dni = ?";
+                    PreparedStatement stmtFechaSancion = con.prepareStatement(queryFechaSancion);
+                    stmtFechaSancion.setString(1, dni_usuario);
+                    ResultSet fechas = stmtFechaSancion.executeQuery();
+
+                    if (fechas.next()) {
+                        sancionFecha = fechas.getString("Fecha_sancion");
+                        if (sancionFecha != null && !sancionFecha.isEmpty()) {
+                            LocalDate fechaSancion = LocalDate.parse(sancionFecha);
+                            LocalDate fechaActualDate = LocalDate.parse(fechaActual);
+                            long dias = ChronoUnit.DAYS.between(fechaSancion, fechaActualDate);
+
+                            if (dias <= 14) {
+                                JOptionPane.showMessageDialog(null, "No podrá adquirir libro hasta que no pasen dos semanas desde la fecha de la sanción");
+                                return;
+                            }
+                        }
+                    }
+
                     // Consultar si el libro existe y está disponible
                     String queryLibro = "SELECT * FROM libros WHERE id_libro = ?";
-                    //Preparo la consulta
                     PreparedStatement stmtLibro = con.prepareStatement(queryLibro);
-                    //Le damos valor al primer parametro con el id_libro
                     stmtLibro.setString(1, id_libro);
-                    //Ejecuto la consulta
                     ResultSet resultadoLibro = stmtLibro.executeQuery();
 
                     if (resultadoLibro.next()) {
@@ -788,37 +808,39 @@ public class biblioteca extends javax.swing.JFrame {
                             stmtActualizarLibro.setString(1, id_libro);
                             stmtActualizarLibro.executeUpdate();
                             
-                            //Pasar el usuario, el libro y la fecha a la tabla prestamos
-                            fechaInicio=LocalDate.now().toString();
-                            String prestamo="INSERT INTO prestamos (Usuario, Libro, `Fecha Prestamo`) VALUES (?, ?, ?)";
-                            PreparedStatement stmtActualizaPrestamo=con.prepareStatement(prestamo);
+                            String actualizarSancion="UPDATE usuarios SET Fecha_sancion = NULL WHERE dni = ?";
+                            PreparedStatement stmtActualizarSancion=con.prepareStatement(actualizarSancion);                         
+                            stmtActualizarSancion.setString(1, dni_usuario);
+                            stmtActualizarSancion.execute();
+
+                            // Pasar el usuario, el libro y la fecha a la tabla prestamos
+                            fechaInicio = LocalDate.now().toString();
+                            String prestamo = "INSERT INTO prestamos (Usuario, Libro, `Fecha Prestamo`) VALUES (?, ?, ?)";
+                            PreparedStatement stmtActualizaPrestamo = con.prepareStatement(prestamo);
                             stmtActualizaPrestamo.setString(1, dni_usuario);
                             stmtActualizaPrestamo.setString(2, id_libro);
                             stmtActualizaPrestamo.setString(3, fechaInicio);
                             stmtActualizaPrestamo.execute();
-                            
-                            
-                            
-                            JOptionPane.showMessageDialog(null, "Libro prestado con exito");
+
+                            JOptionPane.showMessageDialog(null, "Libro prestado con éxito");
                         } else {
                             JOptionPane.showMessageDialog(null, "El libro no está disponible.");
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "El libro no existe.");
-
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "El usuario no existe.");
-
                 }
 
                 con.close();
             }
-
         } catch (Exception ex) {
             System.out.println("No conectado o error al modificar los datos: ");
             ex.printStackTrace();
         }
+    
+
 
 
     }//GEN-LAST:event_prestarActionPerformed
@@ -938,6 +960,11 @@ public class biblioteca extends javax.swing.JFrame {
                             stmtSancion.setString(2, dniUsuario);
                             stmtSancion.setString(3, idLibro);
                             stmtSancion.execute();
+                            String usuarioSancionado="UPDATE usuarios SET Fecha_sancion=? WHERE dni=?";
+                            PreparedStatement stmtUsuarioSancion=con.prepareStatement(usuarioSancionado);
+                            stmtUsuarioSancion.setString(1, fechaDevolucion);
+                            stmtUsuarioSancion.setString(2, dniUsuario);
+                            stmtUsuarioSancion.execute();
                             JOptionPane.showMessageDialog(null, "Sancion por devolucion de libro fuera de plazo");
                         }
                     } else {
